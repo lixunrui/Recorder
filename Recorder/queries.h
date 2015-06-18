@@ -64,15 +64,13 @@ typedef enum
 
 #define INSERT_RECORD @"INSERT INTO record (bookerID, itemID, quantity, statusID, sellPrice, freeDelivery) VALUES (%d, %d, %d, %d, %f, %d);"
 
-#define INSERT_BOOKER @"INSERT into booker (name, address, contactNum) VALUES ('%@', '%@', '%@');"
-
 #define INSERT_ITEM @"INSERT INTO items (name, purchasePrice) VALUES ('%@', %f);"
 
 #define DELETE_ROW_FROM_RECORD_AT @"delete from record where id = %d;"
 
 #define DELETE_ROW_FROM_BOOKER_AT @"delete from booker where bookerid= %d;"
 
-#define DELETE_ROW_FROM_ITEM_AT @"delete from item where itemid = %d;"
+#define DELETE_ROW_FROM_ITEM_AT @"delete from items where itemid = %d;"
 
 #define SEARCH_BOOKER_WITH_PHONE @"select * from booker where contactNum='%@'"
 

@@ -12,7 +12,6 @@
 @interface ManagementTableViewController ()
 @property (strong, nonatomic) IBOutlet UITableView *tableManagement;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *btnAddItem;
-
 @end
 
 @implementation ManagementTableViewController
@@ -52,7 +51,6 @@
 }
 
 #pragma mark - Table view data source
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     // Return the number of sections.
     return 1;
@@ -109,19 +107,19 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         switch (_taskName) {
             case TaskBooker:
-                [_database execQuery:[NSString stringWithFormat: DELETE_ROW_FROM_BOOKER_AT, arrResults[indexPath.row][0]]];
-                [self loadData];
+                [_database execQuery:[NSString stringWithFormat: DELETE_ROW_FROM_BOOKER_AT, [arrResults[indexPath.row][0] integerValue]]];
                 break;
             case TaskItem:
-                [_database execQuery:[NSString stringWithFormat:DELETE_ROW_FROM_ITEM_AT, arrResults[indexPath.row][0]]];
+            {
+                [_database execQuery:[NSString stringWithFormat:DELETE_ROW_FROM_ITEM_AT, [arrResults[indexPath.row][0] integerValue]]];
+            }
             default:
                 break;
         }
-
+        [self loadData];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     }
 }
-
 
 /*
 // Override to support rearranging the table view.
@@ -137,6 +135,10 @@
 }
 */
 
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [self.view resignFirstResponder];
+}
 
 #pragma mark - Navigation
 

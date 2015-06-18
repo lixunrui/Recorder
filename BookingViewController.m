@@ -95,8 +95,7 @@ extern Database* _database;
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {NSLog(@"row is %d", indexPath.row);
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        NSLog(@"%@",[NSString stringWithFormat:DELETE_ROW_FROM_RECORD_AT, arrRecordsID[indexPath.row][0]]);
-        [_database execQuery:[NSString stringWithFormat:DELETE_ROW_FROM_RECORD_AT, arrRecordsID[indexPath.row][0]]];
+        [_database execQuery:[NSString stringWithFormat:DELETE_ROW_FROM_RECORD_AT, [arrRecordsID[indexPath.row][0]integerValue]]];
         [self loadData];
         [self loadRecordsID];
         [self.bookingTable deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];

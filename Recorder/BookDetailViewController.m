@@ -193,6 +193,7 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    [self.view resignFirstResponder];
     [super touchesBegan:touches withEvent:event];
     [self.view endEditing:YES];
 }
