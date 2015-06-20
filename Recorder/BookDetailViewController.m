@@ -36,6 +36,7 @@
     NSInteger currentStatusID;
     BOOL selectedItem;
     BOOL selectedStatus;
+    CGRect keyboardSize;
 }
 
 - (void)viewDidLoad {
@@ -48,12 +49,32 @@
     [self.view bringSubviewToFront:self.itemPicker];
     _txtAddress.layer.borderWidth = 1;
     _txtAddress.layer.cornerRadius = 6;
+
+    [self setTextFieldsKeyboardType];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillDismiss:) name:UIKeyboardWillHideNotification object:nil];
 }
+
+- (void)setTextFieldsKeyboardType
+{
+    _txtAddress.keyboardType = UIKeyboardTypeDefault;
+    _txtPhone.keyboardType = UIKeyboardTypeNumberPad;
+    _txtQuantity.keyboardType = UIKeyboardTypeNumberPad;
+    _txtPrice.keyboardType = UIKeyboardTypeDecimalPad;
+}
+
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [self loadDetails];
     [self loadFields];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (void)setEditing:(BOOL)editing animated:(BOOL)animated
@@ -157,6 +178,8 @@
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField
 {
+    selectedItem = NO;
+    selectedStatus = NO;
     if (textField == _txtItemName ) {
         selectedItem = YES;
         selectedStatus = NO;NSLog(@"Current A");
@@ -172,6 +195,47 @@
         [textField resignFirstResponder];
         [self.itemPicker reloadAllComponents];
         self.itemPicker.hidden = NO;
+    }
+    else{
+    NSLog(@"sending frame");
+        [self keyboardChangeAnimation:textField.frame];
+    }
+}
+
+- (void)keyboardWillShow:(id)sender
+{
+    NSLog(@"get keyboard frame");
+    NSDictionary* info = [sender userInfo];
+
+    NSValue* keyboard = [info objectForKey:UIKeyboardFrameEndUserInfoKey];
+
+    keyboardSize = [keyboard CGRectValue];
+}
+
+- (void)keyboardWillDismiss:(id)sender
+{
+    [UIView beginAnimations:@"keyboardChange" context:nil];
+    [UIView setAnimationDuration:0.3];
+
+    [self.view setFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+
+    [UIView commitAnimations];
+
+}
+
+- (void)keyboardChangeAnimation:(CGRect) textFieldFrame
+{
+    float y = keyboardSize.origin.y - textFieldFrame.origin.y;
+
+    if (y < 0 && keyboardSize.origin.y > 0) {
+        // need to reloate the keyboard
+        [UIView beginAnimations:@"keyboardChange" context:nil];
+        [UIView setAnimationDuration:0.3];
+
+        [self.view setFrame:CGRectMake(0, y, self.view.frame.size.width, self.view.frame.size.height)];
+
+        [UIView commitAnimations];
+
     }
 }
 //- (IBAction)clickPickItem:(id)sender {
@@ -193,9 +257,10 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self.view resignFirstResponder];
     [super touchesBegan:touches withEvent:event];
+    [self.view resignFirstResponder];
     [self.view endEditing:YES];
+    [self.itemPicker setHidden:YES];
 }
 
 #pragma mark - UI Picker View
